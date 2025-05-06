@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="MidTrack_:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/MidTrack__jar</output-path>
+    <root id="archive" name="MidTrack_.jar">
+      <element id="module-output" name="MidTrack_" />
+      <element id="dir-copy" path="$PROJECT_DIR$/src/img" />
+    </root>
+  </artifact>
+</component>

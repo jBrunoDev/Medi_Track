@@ -1,0 +1,20 @@
+package constants;
+
+import java.awt.*;
+
+public class UIvariables {
+    //Criacao de variaveis para utilizar no codigo
+
+    //Cores
+    public static final Color WHITE_COLOR = new Color(255, 255, 255);
+    public static final Color BACKGROUND_PANEL_BLUE = new Color(24,120,141);
+    public static final Color BLACK_COLOR = new Color(0,0,0);
+    public static final Color ERROR_COLOR = new Color(255,0,0);
+    public static final Color BTN_COLOR = new Color(34,34,34);
+
+    //fontes
+    public static final Font FONT_LOGO = new Font("Poppins", Font.BOLD, 24);
+    public static final Font FONT_INPUT = new Font("Poppins", Font.PLAIN,24);
+    public static final Font FONT_BUTTON = new Font("Poppins", Font.BOLD,26);
+
+}
