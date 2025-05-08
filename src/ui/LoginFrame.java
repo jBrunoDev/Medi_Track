@@ -1,12 +1,11 @@
 package ui;
 
 import constants.UIvariables;
-
-import javax.swing.*;
 import java.awt.*;
-import java.net.URL;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URL;
+import javax.swing.*;
 
 
 public class LoginFrame extends JFrame {
@@ -172,11 +171,11 @@ public class LoginFrame extends JFrame {
         rightPanel.add(btnLogin);
         setVisible(true);
     }
-
-
+    
+    /* 
     public static void main(String[] args) {
         new LoginFrame();
     }
-
+    */
 
 }
