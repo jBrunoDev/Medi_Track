@@ -12,8 +12,13 @@ import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.text.MaskFormatter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.text.SimpleDateFormat;
 import java.text.ParseException;
-import javax.swing.border.Border;
+import java.lang.ClassNotFoundException;
+import java.sql.*;
 
 
 public class RecepcionistaFrame extends JFrame {
@@ -22,7 +27,7 @@ public class RecepcionistaFrame extends JFrame {
     JPanel sidebarPanel, contentPanel, formsPanel;
     ImageIcon iconLogo, iconHome, iconPacientes, iconLogOut, iconSeta, iconLine;
     JLabel labelTitle, labelIconLine, labelInputCPF, labelInputNome, labelInputSobrenome, labelInputDataNasc, labelInputNumeroTelefone, labeliconLogo, labeliconHome, labeliconPacientes, labeliconLogOut;
-
+    JFormattedTextField dateField;
     JTextField inputCPF, inputNome, inputSobrenome, inputNumeroTelefone;
     JButton btnCadastrar, btnSeta, btnHome, btnPacientes, btnLogOut;
 
@@ -33,13 +38,21 @@ public class RecepcionistaFrame extends JFrame {
     private Timer animationTimer;
 
     public RecepcionistaFrame() {
-        setTitle("Login");
+        setTitle("Cadastrar Paciente");
         setSize(1500, 800);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
         setLocationRelativeTo(null);
         setLayout(null);
         getContentPane().setBackground(UIvariables.BACKGROUND_RECEPCIONISTA_FRAME);
+
+        UIManager.put("OptionPane.messageFont", new Font("Poppins", Font.BOLD, 15));
+        UIManager.put("OptionPane.messageForeground", UIvariables.BLACK_COLOR);
+        UIManager.put("OptionPane.background", Color.WHITE);
+        UIManager.put("Panel.background", Color.WHITE); // necessário para o fundo
+        UIManager.put("Button.background", UIvariables.BACKGROUND_PANEL_BLUE);
+        UIManager.put("Button.foreground", UIvariables.WHITE_COLOR);
+
 
         // definir o icon do logo
         URL iconUrl = getClass().getResource("../img/img-logo.png");
@@ -55,6 +68,8 @@ public class RecepcionistaFrame extends JFrame {
         contentPanel.setBounds(100, 42, 1300, 670);
         contentPanel.setBackground(UIvariables.WHITE_COLOR);
         contentPanel.setLayout(null);
+        //
+
 
         // criação do sidebar
         sidebarPanel = new JPanel();
@@ -153,6 +168,14 @@ public class RecepcionistaFrame extends JFrame {
             }
         });
 
+        btnLogOut.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                new LoginFrame();
+            }
+        });
+
         iconSeta = new ImageIcon(getClass().getResource("../img/assets/icon-sideBar.png"));
         btnSeta = new JButton(iconSeta);
         btnSeta.setBounds(240, 16, 32, 32);
@@ -232,7 +255,7 @@ public class RecepcionistaFrame extends JFrame {
         try {
             MaskFormatter dateMask = new MaskFormatter("   ##/##/####"); // DD/MM/YYYY
             dateMask.setPlaceholderCharacter('_');
-            JFormattedTextField dateField = new JFormattedTextField(dateMask);
+            dateField = new JFormattedTextField(dateMask);
             dateField.setColumns(10);
 
             dateField.setBounds(500, 478, 330, 50);
@@ -264,6 +287,75 @@ public class RecepcionistaFrame extends JFrame {
             @Override
             public void mouseEntered(MouseEvent e) {
                 btnCadastrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+        });
+
+        btnCadastrar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String query;
+                String SUrl, SUser, Spass;
+                String cpf, nomeCompleto, nome, sobrenome, numeroTelefone;
+                java.sql.Date dataNascimento = null;
+
+                SUrl = "jdbc:mysql://localhost:3306/dbmeditrack";
+                SUser = "root";
+                Spass = "";
+
+                if ("".equals(inputCPF.getText()) || "".equals(inputNome.getText()) || "".equals(inputSobrenome.getText()) || "".equals(inputNumeroTelefone.getText()) || dateField.getText().contains("_")) {
+                    System.out.println("Erro: campos vazios ou data incompleta");
+                    return;
+                } else {
+                    nome = inputNome.getText();
+                    sobrenome = inputSobrenome.getText();
+                    cpf = inputCPF.getText();
+                    numeroTelefone = inputNumeroTelefone.getText();
+                    nomeCompleto = nome + " " + sobrenome;
+
+                    String dataDigitada = dateField.getText().replaceAll("[\\s_]", "");
+                    SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+                    try {
+                        java.util.Date dataUtil = formato.parse(dataDigitada);
+                        dataNascimento = new java.sql.Date(dataUtil.getTime());
+                    } catch (ParseException ex) {
+                        System.err.println("Erro ao formatar a data: " + ex.getMessage());
+                        ex.printStackTrace();
+                        return; // Interrompe a ação se a data for inválida
+                    }
+
+                    query = "INSERT INTO paciente_ (Nome, cpf, numero_telefone, data_nascimento) VALUES (?, ?, ?, ?)";
+
+                    try (Connection con = DriverManager.getConnection(SUrl, SUser, Spass); PreparedStatement pstmt = con.prepareStatement(query)) {
+
+                        pstmt.setString(1, nomeCompleto);
+                        pstmt.setString(2, cpf);
+                        pstmt.setString(3, numeroTelefone);
+                        pstmt.setDate(4, dataNascimento);
+
+                        int linhasAfetadas = pstmt.executeUpdate();
+
+                        if (linhasAfetadas > 0) {
+                            System.out.println("Paciente cadastrado com sucesso!");
+                            JOptionPane.showMessageDialog(RecepcionistaFrame.this, // Use 'this' se estiver dentro da classe RecepcionistaFrame
+                                    "Paciente cadastrado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+
+
+                            inputCPF.setText("");
+                            inputNome.setText("");
+                            inputSobrenome.setText("");
+                            inputNumeroTelefone.setText("");
+                            dateField.setText("");
+                        } else {
+                            System.out.println("Erro ao cadastrar o paciente.");
+                        }
+
+                    } catch (SQLException ex) {
+                        System.err.println("Erro de SQL: " + ex.getMessage());
+                        ex.printStackTrace();
+                    }
+
+                }
+
             }
         });
 

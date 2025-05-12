@@ -1,22 +1,27 @@
 package ui;
 
+
 import constants.UIvariables;
+
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
+import java.sql.*;
 import javax.swing.*;
+
 
 
 public class LoginFrame extends JFrame {
     // criação das variaveis de componentes
-
     JPanel leftPanel, rightPanel;
-    JLabel logoLabel, idLabel, passwordLabel, imgLabelPanelLeft, imgLabelContentPanelLeft, imgLabelLogoPanelIcon2;
-    JTextField idField;
+    JLabel logoLabel, cpfLabel, passwordLabel, imgLabelPanelLeft, imgLabelContentPanelLeft, imgLabelLogoPanelIcon2;
+    JTextField cpfField;
     JPasswordField passwordField;
-    JButton btnLogin,  btnEye;
-    ImageIcon logoIcon, logoPanelIcon, logoPanelIcon2, contentRightImage, eyeClose, eyeOpen ;
+    JButton btnLogin, btnEye;
+    ImageIcon logoIcon, logoPanelIcon, logoPanelIcon2, contentRightImage, eyeClose, eyeOpen;
 
     public LoginFrame() {
         setTitle("Login");
@@ -82,15 +87,15 @@ public class LoginFrame extends JFrame {
         imgLabelLogoPanelIcon2.setBounds(329, 94, 92, 92);
 
         //cricao dos inputs
-        idLabel = new JLabel("ID");
-        idLabel.setBounds(135, 250, 40, 40);
-        idLabel.setFont(UIvariables.FONT_INPUT);
-        idLabel.setForeground(UIvariables.BLACK_COLOR);
+        cpfLabel = new JLabel("CPF");
+        cpfLabel.setBounds(135, 250, 120, 40);
+        cpfLabel.setFont(UIvariables.FONT_INPUT);
+        cpfLabel.setForeground(UIvariables.BLACK_COLOR);
 
 
-        idField = new JTextField();
-        idField.setBounds(125, 290, 500, 60);
-        idField.setFont(UIvariables.FONT_INPUT);
+        cpfField = new JTextField();
+        cpfField.setBounds(125, 290, 500, 60);
+        cpfField.setFont(UIvariables.FONT_INPUT);
 
         passwordLabel = new JLabel("Senha");
         passwordLabel.setBounds(135, 370, 100, 40);
@@ -108,8 +113,8 @@ public class LoginFrame extends JFrame {
           na posição [0] o olho esta fechado na posição [1] o olho está aberto
 
          */
-         eyeClose = new ImageIcon(getClass().getResource("../img/img-eye-close.png"));
-         eyeOpen = new ImageIcon(getClass().getResource("../img/img-eye-open.png"));
+        eyeClose = new ImageIcon(getClass().getResource("../img/img-eye-close.png"));
+        eyeOpen = new ImageIcon(getClass().getResource("../img/img-eye-open.png"));
 
         btnEye = new JButton(eyeClose);
         btnEye.setContentAreaFilled(false);
@@ -157,25 +162,102 @@ public class LoginFrame extends JFrame {
             }
         });
 
+        btnLogin.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String CPF = null, Password, query, passwordDatabase = null, IdDatabase = null;
+                boolean isMedico = false, isRecepcionista = false, isEnfermeiro = false, isEnfermeiroTriagem = false, isRH = false;
+                int found = 0;
+                String SUrl, SUser, Spass; // Essas são as variaveis que vão receber o link do servidor, o usuario do servidor e a senha do servidor
+                SUrl = "jdbc:mysql://localhost:3306/dbmeditrack"; // Meu servidor é local, então é localhost. O nome do meu banco de dados é register_users
+                SUser = "root"; // por padrão o usuario é root
+                Spass = ""; // e novamente por padrao a senha é vazia
+
+                // Tentar fazer conexão com o banco, caso nao consiga, pegar o erro e exibir
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    Connection con = DriverManager.getConnection(SUrl, SUser, Spass);
+
+                    if ("".equals(cpfField.getText()) || "".equals(passwordField.getText())) {
+                        System.out.println("Erro: campos vazios");
+                        return;
+                    }
+
+                    CPF = cpfField.getText();
+                    Password = passwordField.getText();
+
+                    query = "SELECT * FROM funcionario_ WHERE cpf = ?";
+                    PreparedStatement ps = con.prepareStatement(query);
+                    ps.setString(1, CPF);
+                    ResultSet rs = ps.executeQuery();
+
+
+                    while (rs.next()) {
+
+                        passwordDatabase = rs.getString("Senha");
+                        isMedico = rs.getBoolean("medico"); // Aqui pegamos o valor booleano
+                        isRecepcionista = rs.getBoolean("Recepcionista");
+                        isEnfermeiro = rs.getBoolean("Enfermeiro");
+                        isEnfermeiroTriagem = rs.getBoolean("Enfermeiro_triagem");
+                        isRH = rs.getBoolean("RH");
+
+                        found = 1;
+                    }
+
+                    if (found == 1 && Password.equals(passwordDatabase)) {
+                        System.out.println("Login bem-sucedido!");
+                        dispose();
+
+                        if (isMedico) {
+                            //tela do medico
+                            System.out.println("Sou Medico");
+                        } else if (isRecepcionista) {
+                            new RecepcionistaFrame();
+                        } else if (isEnfermeiro) {
+                            //tela enfermeiro
+                            System.out.println("Sou enfermeiro");
+                        } else if (isEnfermeiroTriagem) {
+                            //enfermeiro de triagem
+                            System.out.println("Sou enfermeiro de triagem");
+                        } else if(isRH){
+                            new FuncionarioFrame();
+                        }
+
+
+                    } else {
+                        System.out.println("Senha ou nome incorretos.");
+                    }
+
+                    cpfField.setText("");
+                    passwordField.setText("");
+
+                } catch (Exception ex) {
+                    ex.printStackTrace(); // Mostra o erro completo
+                }
+
+            }
+        });
+
 
         add(leftPanel);
         leftPanel.add(logoLabel);
         leftPanel.add(imgLabelContentPanelLeft);
         add(rightPanel);
         rightPanel.add(imgLabelLogoPanelIcon2);
-        rightPanel.add(idField);
-        rightPanel.add(idLabel);
+        rightPanel.add(cpfField);
+        rightPanel.add(cpfLabel);
         rightPanel.add(passwordField);
         rightPanel.add(btnEye);
         rightPanel.add(passwordLabel);
         rightPanel.add(btnLogin);
         setVisible(true);
     }
-    
-    /* 
+
+
     public static void main(String[] args) {
         new LoginFrame();
     }
-    */
+
 
 }
