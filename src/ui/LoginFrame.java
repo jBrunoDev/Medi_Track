@@ -17,7 +17,7 @@ import javax.swing.*;
 public class LoginFrame extends JFrame {
     // criação das variaveis de componentes
     JPanel leftPanel, rightPanel;
-    JLabel logoLabel, cpfLabel, passwordLabel, imgLabelPanelLeft, imgLabelContentPanelLeft, imgLabelLogoPanelIcon2;
+    JLabel logoLabel, cpfLabel, passwordLabel, imgLabelPanelLeft, imgLabelContentPanelLeft, imgLabelLogoPanelIcon2, errorMenssage;
     JTextField cpfField;
     JPasswordField passwordField;
     JButton btnLogin, btnEye;
@@ -108,6 +108,17 @@ public class LoginFrame extends JFrame {
         passwordField.setFont(UIvariables.FONT_INPUT);
 
 
+        errorMenssage = new JLabel("Senha ou CPF estão incorretos");
+        errorMenssage.setBounds(125, 490, 500, 70);
+        errorMenssage.setFont(UIvariables.FONT_ERROR);
+        errorMenssage.setForeground(UIvariables.ERROR_LABEL);
+        errorMenssage.setOpaque(true);
+        errorMenssage.setHorizontalAlignment(SwingConstants.CENTER); // opcional: centraliza o texto
+        errorMenssage.setBackground(UIvariables.ERRO_BOXLABEL);
+        errorMenssage.setVisible(false);
+        rightPanel.add(errorMenssage);
+
+
 
         /*Criação do botao do olho --> Criacao de um array. Olho fechado e olho aberto
           na posição [0] o olho esta fechado na posição [1] o olho está aberto
@@ -149,7 +160,7 @@ public class LoginFrame extends JFrame {
 
         //criação do botão
         btnLogin = new JButton("Login");
-        btnLogin.setBounds(110, 550, 530, 80);
+        btnLogin.setBounds(110, 625, 530, 80);
         btnLogin.setBackground(UIvariables.BTN_COLOR);
         btnLogin.setForeground(UIvariables.WHITE_COLOR);
         btnLogin.setFont(UIvariables.FONT_BUTTON);
@@ -227,6 +238,12 @@ public class LoginFrame extends JFrame {
 
                     } else {
                         System.out.println("Senha ou nome incorretos.");
+                        cpfField.setBorder(BorderFactory.createLineBorder(UIvariables.ERROR_COLOR, 2));
+                        passwordField.setBorder(BorderFactory.createLineBorder(UIvariables.ERROR_COLOR, 2));
+                        fadeInLabel(errorMenssage);
+
+
+
                     }
 
                     cpfField.setText("");
@@ -254,6 +271,46 @@ public class LoginFrame extends JFrame {
         setVisible(true);
     }
 
+
+    /*
+        Explicação do código abaixo:
+
+        Criação do efeito fade in
+
+        A label começa invisível, com a cor definida em formato RGBA:
+        R (red), G (green), B (blue), A (alpha - transparência).
+        Neste caso, usamos a cor vermelha (200, 0, 0) com alpha = 0 (totalmente invisível).
+
+        Depois, iniciamos o Timer. A variável 'alpha' começa em 0 e é aumentada gradualmente a cada intervalo (30ms),
+        somando 15 a cada passo.
+
+        A cada atualização do Timer, a cor da label é atualizada com o novo alpha (transparência reduzida).
+        Quando alpha atingir 255 (completamente visível), o Timer para.
+
+        Esse processo cria uma transição suave do texto da label aparecendo na tela.
+    */
+
+    private void fadeInLabel(JLabel label) {
+        label.setVisible(true); // Garante que ele esteja visível
+        label.setForeground(new Color(200, 0, 0, 0));
+
+        Timer timer = new Timer(30, null);
+        timer.addActionListener(new ActionListener() {
+            int alpha = 0;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (alpha >= 255) {
+                    timer.stop();
+                } else {
+                    alpha += 15; // Aumenta o alpha gradualmente
+                    label.setForeground(new Color(200, 0, 0, alpha));
+                }
+            }
+        });
+
+        timer.start();
+    }
 
     public static void main(String[] args) {
         new LoginFrame();

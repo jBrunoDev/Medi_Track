@@ -243,25 +243,25 @@ public class FuncionarioFrame extends JFrame {
 
 
         JCheckBox checkMedico = new JCheckBox("Médico");
-        checkMedico.setBounds(0, 550, 200, 40);
+        checkMedico.setBounds(500, 420, 200, 40);
         checkMedico.setFont(UIvariables.FONT_INPUT);
         checkMedico.setForeground(UIvariables.BLACK_COLOR);
         checkMedico.setBackground(UIvariables.WHITE_COLOR);
 
         JCheckBox checkEnfermeiro = new JCheckBox("Enfermeiro");
-        checkEnfermeiro.setBounds(220, 550, 200, 40);
+        checkEnfermeiro.setBounds(500, 460, 200, 40);
         checkEnfermeiro.setFont(UIvariables.FONT_INPUT);
         checkEnfermeiro.setForeground(UIvariables.BLACK_COLOR);
         checkEnfermeiro.setBackground(UIvariables.WHITE_COLOR);
 
         JCheckBox checkEnfermeiroTriagem = new JCheckBox("Enf. Triagem");
-        checkEnfermeiroTriagem.setBounds(440, 550, 250, 40);
+        checkEnfermeiroTriagem.setBounds(500, 500, 250, 40);
         checkEnfermeiroTriagem.setFont(UIvariables.FONT_INPUT);
         checkEnfermeiroTriagem.setForeground(UIvariables.BLACK_COLOR);
         checkEnfermeiroTriagem.setBackground(UIvariables.WHITE_COLOR);
 
         JCheckBox checkRecepcionista = new JCheckBox("Recepcionista");
-        checkRecepcionista.setBounds(700, 550, 200, 40);
+        checkRecepcionista.setBounds(500, 540, 200, 40);
         checkRecepcionista.setFont(UIvariables.FONT_INPUT);
         checkRecepcionista.setForeground(UIvariables.BLACK_COLOR);
         checkRecepcionista.setBackground(UIvariables.WHITE_COLOR);
