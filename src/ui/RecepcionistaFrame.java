@@ -121,6 +121,16 @@ public class RecepcionistaFrame extends JFrame {
         btnPacientes.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA);
         btnPacientes.setForeground(UIvariables.WHITE_COLOR);
 
+        btnPacientes.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Crud Crud = new Crud();
+                Crud.setVisible(true);
+
+                SwingUtilities.getWindowAncestor(btnPacientes).dispose();
+
+            }
+        });
+
         //remover a estilização do botão
         btnPacientes.setBorderPainted(false); // Remove a borda
         btnPacientes.setContentAreaFilled(false); // Remove o preenchimento
@@ -300,7 +310,7 @@ public class RecepcionistaFrame extends JFrame {
 
                 SUrl = "jdbc:mysql://localhost:3306/dbmeditrack";
                 SUser = "root";
-                Spass = "";
+                Spass = "admin";
 
                 if ("".equals(inputCPF.getText()) || "".equals(inputNome.getText()) || "".equals(inputSobrenome.getText()) || "".equals(inputNumeroTelefone.getText()) || dateField.getText().contains("_")) {
                     System.out.println("Erro: campos vazios ou data incompleta");
