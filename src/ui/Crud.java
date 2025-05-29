@@ -106,6 +106,7 @@ public class Crud extends JFrame {
         configurarBotaoSidebar(btnHome);
         sidebarPanel.add(btnHome);
 
+
         iconPacientes = new ImageIcon(getClass().getResource("/img/assets/icon-pacientes.png"));
         labeliconPacientes = new JLabel(iconPacientes);
         labeliconPacientes.setBounds(58, 250, 32, 32);
@@ -135,6 +136,14 @@ public class Crud extends JFrame {
         btnLogOut.setBounds(56, 455, 120, 40);
         configurarBotaoSidebar(btnLogOut);
         sidebarPanel.add(btnLogOut);
+
+        btnLogOut.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                new LoginFrame();
+            }
+        });
 
         carregarPacientes();
     }
