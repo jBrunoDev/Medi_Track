@@ -1,8 +1,7 @@
 package ui;
 
+import javax.swing.text.*;
 import constants.UIvariables;
-
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -20,23 +19,18 @@ public class Triagem extends JFrame {
     ImageIcon iconLogo, iconHome, iconPacientes, iconLogOut, iconSeta, iconLine;
     JLabel labelTitle;
     JLabel labelIconLine;
-    JLabel labelInputCPF;
     JTextField inputTEMP;
     JLabel labelInputNome;
-    JLabel labelInputSobrenome;
-    JLabel labelInputDataNasc;
-    JLabel labelInputNumeroTelefone;
     JLabel labeliconLogo;
     JLabel labeliconHome;
     JLabel labeliconPacientes;
     JLabel labeliconLogOut;
     JLabel labelInputTemperatura, labelInputAltura, labelInputAlergias, labelInputSintomas, labelInputObs;
     JLabel labelInputAge;
-    JTextField inputAge, inputAltura, inputAlergias;
+    JTextField inputAge, inputAltura, inputAlergias; // inputAlergias é um JTextField aqui, mas depois vira JTextArea
     JLabel labelInputPeso, labelInputTitulo;
-    JTextField inputPeso, inputSintomas, inputObs;
-    JFormattedTextField dateField;
-    JTextField inputCPF, inputNome, inputSobrenome, inputNumeroTelefone;
+    JTextField inputPeso, inputSintomas, inputObs; // inputSintomas e inputObs são JTextFields aqui, mas depois viram JTextAreas
+    JTextField inputNome;
     JButton btnCadastrar, btnSeta, btnHome, btnPacientes, btnLogOut;
 
     // variaveis para a animação
@@ -71,7 +65,9 @@ public class Triagem extends JFrame {
             System.err.println("Icone do logo não encontrado!");
         }
 
-        // criação do painel e conteudo
+// criação do painel e conteúdo
+
+
         contentPanel = new JPanel();
         contentPanel.setBounds(100, 42, 1300, 670);
         contentPanel.setBackground(UIvariables.WHITE_COLOR);
@@ -80,14 +76,14 @@ public class Triagem extends JFrame {
 //titulo
 
         labelInputTitulo = new JLabel("Cadastrar Triagem");
-        labelInputTitulo.setBounds(350, 40, 350, 40); // +50px
+        labelInputTitulo.setBounds(350, 40, 350, 40);
         labelInputTitulo.setForeground(UIvariables.BLACK_COLOR);
         labelInputTitulo.setFont(UIvariables.FONT_TITLE);
         contentPanel.add(labelInputTitulo);
 
 // campo de nome
         labelInputNome = new JLabel("Nome:");
-        labelInputNome.setBounds(350, 135, 200, 40); // +50px
+        labelInputNome.setBounds(350, 135, 200, 40);
         labelInputNome.setForeground(UIvariables.BLACK_COLOR);
         labelInputNome.setFont(UIvariables.FONT_TITLE2);
         contentPanel.add(labelInputNome);
@@ -109,7 +105,9 @@ public class Triagem extends JFrame {
         inputPeso.setBounds(350, 300, 120, 40); // +50px
         inputPeso.setFont(UIvariables.FONT_INPUT);
         inputPeso.setForeground(UIvariables.BLACK_COLOR);
+        ((AbstractDocument) inputPeso.getDocument()).setDocumentFilter(new NumericFilter()); // APLICANDO O FILTRO
         contentPanel.add(inputPeso);
+
 
 //campo de temperatura
         labelInputTemperatura = new JLabel("Temperatura (°C)");
@@ -120,8 +118,9 @@ public class Triagem extends JFrame {
 
         inputTEMP = new JTextField();
         inputTEMP.setBounds(350, 380, 120, 40); // +50px
-        inputTEMP.setFont(UIvariables.FONT_TITLE2);
+        inputTEMP.setFont(UIvariables.FONT_INPUT);
         inputTEMP.setForeground(UIvariables.BLACK_COLOR);
+        ((AbstractDocument) inputTEMP.getDocument()).setDocumentFilter(new NumericFilter()); // APLICANDO O FILTRO
         contentPanel.add(inputTEMP);
 
         //campo de idade
@@ -136,6 +135,7 @@ public class Triagem extends JFrame {
         inputAge.setBounds(550, 300, 120, 41); // +50px
         inputAge.setFont(UIvariables.FONT_INPUT);
         inputAge.setForeground(UIvariables.BLACK_COLOR);
+        ((AbstractDocument) inputAge.getDocument()).setDocumentFilter(new NumericFilter()); // APLICANDO O FILTRO
         contentPanel.add(inputAge);
 
         //campo de altura
@@ -143,13 +143,14 @@ public class Triagem extends JFrame {
         labelInputAltura = new JLabel("Altura:");
         labelInputAltura.setBounds(550, 340, 200, 40);
         labelInputAltura.setForeground(UIvariables.BLACK_COLOR);
-        labelInputAltura.setFont(UIvariables.FONT_TITLE2);
+        labelInputAltura.setFont(UIvariables.FONT_INPUT);
         contentPanel.add(labelInputAltura);
 
         inputAltura = new JTextField();
         inputAltura.setBounds(550, 380, 120, 40);
         inputAltura.setFont(UIvariables.FONT_INPUT);
         inputAltura.setForeground(UIvariables.BLACK_COLOR);
+        ((AbstractDocument) inputAltura.getDocument()).setDocumentFilter(new NumericFilter()); // APLICANDO O FILTRO
         contentPanel.add(inputAltura);
 
         //campo de alergias
@@ -160,12 +161,16 @@ public class Triagem extends JFrame {
         labelInputAlergias.setFont(UIvariables.FONT_TITLE2);
         contentPanel.add(labelInputAlergias);
 
-        inputAlergias = new JTextField();
-        inputAlergias.setBounds(750, 170, 470, 100); // +50px
-        inputAlergias.setFont(UIvariables.FONT_INPUT);
-        inputAlergias.setForeground(UIvariables.BLACK_COLOR);
-        contentPanel.add(inputAlergias);
-
+        // Observação: 'inputAlergias' foi declarado como JTextField no início, mas é usado como JTextArea aqui.
+        // O DocumentFilter é aplicado apenas em JTextFields para números.
+        JTextArea inputAlergiasTextArea = new JTextArea(); // Renomeado para evitar conflito
+        inputAlergiasTextArea.setLineWrap(true);
+        inputAlergiasTextArea.setWrapStyleWord(true);
+        inputAlergiasTextArea.setFont(UIvariables.FONT_INPUT);
+        inputAlergiasTextArea.setForeground(UIvariables.BLACK_COLOR);
+        JScrollPane scrollAlergias = new JScrollPane(inputAlergiasTextArea);
+        scrollAlergias.setBounds(750, 170, 470, 100);
+        contentPanel.add(scrollAlergias);
         //campo de sintomas
 
         labelInputSintomas = new JLabel("Sintomas");
@@ -174,24 +179,32 @@ public class Triagem extends JFrame {
         labelInputSintomas.setFont(UIvariables.FONT_TITLE2);
         contentPanel.add(labelInputSintomas);
 
-        inputSintomas = new JTextField();
-        inputSintomas.setBounds(750, 320, 470, 100); // +50px
-        inputSintomas.setFont(UIvariables.FONT_INPUT);
-        inputSintomas.setForeground(UIvariables.BLACK_COLOR);
-        contentPanel.add(inputSintomas);
+        // Observação: 'inputSintomas' foi declarado como JTextField no início, mas é usado como JTextArea aqui.
+        JTextArea inputSintomasTextArea = new JTextArea(); // Renomeado para evitar conflito
+        inputSintomasTextArea.setLineWrap(true);
+        inputSintomasTextArea.setWrapStyleWord(true);
+        inputSintomasTextArea.setFont(UIvariables.FONT_INPUT);
+        inputSintomasTextArea.setForeground(UIvariables.BLACK_COLOR);
+        JScrollPane scrollSintomas = new JScrollPane(inputSintomasTextArea);
+        scrollSintomas.setBounds(750, 320, 470, 100);
+        contentPanel.add(scrollSintomas);
         //campo de obs
 
         labelInputObs = new JLabel("Obs:");
-        labelInputObs.setBounds(350, 420, 250, 40); // +50px
+        labelInputObs.setBounds(350, 460, 250, 40); // +50px
         labelInputObs.setForeground(UIvariables.BLACK_COLOR);
         labelInputObs.setFont(UIvariables.FONT_TITLE2);
         contentPanel.add(labelInputObs);
 
-        inputObs = new JTextField();
-        inputObs.setBounds(350, 461, 700, 150); // +50px
-        inputObs.setFont(UIvariables.FONT_INPUT);
-        inputObs.setForeground(UIvariables.BLACK_COLOR);
-        contentPanel.add(inputObs);
+        // Observação: 'inputObs' foi declarado como JTextField no início, mas é usado como JTextArea aqui.
+        JTextArea inputObsTextArea = new JTextArea(); // Renomeado para evitar conflito
+        inputObsTextArea.setLineWrap(true);
+        inputObsTextArea.setWrapStyleWord(true);
+        inputObsTextArea.setFont(UIvariables.FONT_INPUT);
+        inputObsTextArea.setForeground(UIvariables.BLACK_COLOR);
+        JScrollPane scrollObs = new JScrollPane(inputObsTextArea);
+        scrollObs.setBounds(350, 500, 700, 150);
+        contentPanel.add(scrollObs);
 
         // criação do sidebar
         sidebarPanel = new JPanel();
@@ -277,9 +290,11 @@ public class Triagem extends JFrame {
         });
         sidebarPanel.add(btnHome);
 
+        // Ícone de Pacientes e botão (re-declarado, atenção a isso)
         iconPacientes = new ImageIcon(getClass().getResource("../img/assets/icon-pacientes.png"));
         labeliconPacientes = new JLabel(iconPacientes);
         labeliconPacientes.setBounds(58, 250, 32, 32);
+        //sidebarPanel.add(labeliconPacientes); // Já adicionado acima
 
         btnPacientes = new JButton("Pacientes");
         btnPacientes.setBounds(50, 248, 200, 40);
@@ -314,10 +329,13 @@ public class Triagem extends JFrame {
                 btnPacientes.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA);
             }
         });
+        //sidebarPanel.add(btnPacientes); // Já adicionado acima
 
+        // Ícone de LogOut e botão (re-declarado, atenção a isso)
         iconLogOut = new ImageIcon(getClass().getResource("../img/assets/icon-logOut.png"));
         labeliconLogOut = new JLabel(iconLogOut);
         labeliconLogOut.setBounds(58, 460, 32, 32);
+        //sidebarPanel.add(labeliconLogOut); // Já adicionado acima
 
         btnLogOut = new JButton("Sair");
         btnLogOut.setBounds(45, 455, 150, 40);
@@ -502,6 +520,31 @@ public class Triagem extends JFrame {
         labeliconPacientes.setVisible(true);
         labeliconLogOut.setVisible(true);
     }
+
+    // CLASSE NUMERICFILTER MOVIDA PARA FORA DO CONSTRUTOR PARA MELHOR ORGANIZAÇÃO
+    public class NumericFilter extends DocumentFilter {
+        @Override
+        public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
+            if (string == null) return;
+            if (string.matches("\\d*")) { // Permite apenas dígitos (0-9)
+                super.insertString(fb, offset, string, attr);
+            }
+        }
+
+        @Override
+        public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+            if (text == null) return;
+            if (text.matches("\\d*")) { // Permite apenas dígitos (0-9)
+                super.replace(fb, offset, length, text, attrs);
+            }
+        }
+
+        @Override
+        public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
+            super.remove(fb, offset, length); // Permite a remoção de caracteres
+        }
+    }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             Triagem frame = new Triagem();
